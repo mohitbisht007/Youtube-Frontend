@@ -8,8 +8,6 @@ export default function VideoCard() {
         <div className="flex">
           <img
             className="rounded-full border-1 h-[40px] w-[40px]"
-            src=""
-            alt=""
           />
           <p>How to Start Coding in College</p>
         </div>

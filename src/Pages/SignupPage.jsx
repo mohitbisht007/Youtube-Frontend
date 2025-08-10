@@ -1,7 +1,13 @@
 import { useState } from "react";
 import axios from "axios"
+import { login } from "../redux/Slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
+
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [hasAccount, setHasAccount] = useState(true);
   const [userData, setUserData] = useState({
     username: "",
@@ -17,7 +23,15 @@ export default function SignupPage() {
      
     try {
       const res = await axios.post(endPoint, payload)
-      console.log(res.data)
+      const {token, user} = res.data;
+
+      if(hasAccount){
+        dispatch(login({token, user}))
+      navigate('/')
+      } else {
+        setHasAccount(true)
+      }
+
     } catch (error) {
       console.log(error)
     }
