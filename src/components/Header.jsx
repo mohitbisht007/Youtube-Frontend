@@ -37,11 +37,15 @@ export default function Header() {
       </div>
       <div>
         {isAuth ? 
-        <img
+        <div>
+          <Link to="/upload" ><button>Create Video</button></Link>
+          <img
             className="rounded-full border-1 h-[40px] w-[40px]"
             src={user.avatar}
             onClick={() => setProfileClikced(!profileClicked)}
-          /> :
+          />
+        </div>
+        :
          <Link to="/login"><SignInButton/></Link>           
         }
       </div>
