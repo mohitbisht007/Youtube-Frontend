@@ -1,4 +1,5 @@
 import SignInButton from "./SignInButton";
+import { Link } from "react-router-dom";
 
 export default function Header() {
   return (
@@ -16,7 +17,7 @@ export default function Header() {
         <button className="bg-[#dfdede] rounded-full h-[40px] w-[40px] ml-2"> <i className="fa-solid fa-microphone"></i></button>
       </div>
       <div>
-        <SignInButton/>
+        <Link to="/login"><SignInButton/></Link>
       </div>
     </nav>
   );
