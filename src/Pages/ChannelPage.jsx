@@ -1,11 +1,14 @@
-
+import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import HomeChannel from "../components/HomeChannel";
 import SideNav from "../components/SideNav";
 import VideosChannel from "../components/VideosChannel";
 
-
 export default function ChannelPage() {
+
+  const channelHandle = useParams()
+  console.log(channelHandle)
+
   return (
     <div>
       <Header />
@@ -48,9 +51,9 @@ export default function ChannelPage() {
         </div>
 
         <div>
-          <HomeChannel/>
+          {/* <HomeChannel /> */}
           <h2>Video Card</h2>
-          <VideosChannel/>
+          {/* <VideosChannel /> */}
         </div>
       </div>
     </div>

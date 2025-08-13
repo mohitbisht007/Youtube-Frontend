@@ -18,7 +18,7 @@ export default function SignupPage() {
   const handleSubmit = async(e) => {
     e.preventDefault();
 
-    const endPoint = hasAccount ? "http://localhost:5050/api/auth/login" : "http://localhost:5050/api/auth/signup";
+    const endPoint = hasAccount ? "http://localhost:5050/api/login" : "http://localhost:5050/api/signup";
     const payload = hasAccount ? {email: userData.email, password: userData.password} : userData;
      
     try {
