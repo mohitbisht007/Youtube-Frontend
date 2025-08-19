@@ -21,6 +21,8 @@ export default function VideoPage() {
     getVideo();
   }, []);
 
+  console.log(video)
+
   return (
     <div className="w-[90%] m-auto flex justify-center p-4">
       <div className="w-[70%]">
@@ -55,8 +57,8 @@ export default function VideoPage() {
                 alt=""
               />
               <div>
-                <p>Channel Name</p>
-                <p>Subscribers</p>
+                <p>{video?.channel?.channelName}</p>
+                <p>{video?.channel?.subscribers} Subscribers</p>
               </div>
               <button>Join</button>
               <button>Subscribe</button>
@@ -76,7 +78,7 @@ export default function VideoPage() {
               <p>#Hastags</p>
             </div>
             <div>
-              <p>Description</p>
+              <p>{video.description}</p>
             </div>
           </div>
         </div>

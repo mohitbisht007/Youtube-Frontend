@@ -1,12 +1,16 @@
 import { useSelector } from "react-redux";
 import SignInButton from "./SignInButton";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { logout } from "../redux/Slices/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Header() {
+
+ const [channelData, setChannelData] = useState([])
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -20,6 +24,14 @@ export default function Header() {
     navigate("/");
     setProfileClikced(false);
   };
+
+  useEffect(() => {
+    const getData = async() => {
+      const response = await axios.get()
+    }
+  })
+
+ 
 
   return (
     <nav className="h-[80px] flex justify-between p-2 fixed top-0 w-full z-30 bg-white">
@@ -61,11 +73,6 @@ export default function Header() {
             <SignInButton />
           </Link>
         )}
-      </div>
-      <div>
-        <Link to="/create-channel">
-          <button>Create Channel</button>
-        </Link>
       </div>
 
       {profileClicked && (

@@ -3,11 +3,25 @@ import Header from "../components/Header";
 import HomeChannel from "../components/HomeChannel";
 import SideNav from "../components/SideNav";
 import VideosChannel from "../components/VideosChannel";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function ChannelPage() {
 
-  const channelHandle = useParams()
-  console.log(channelHandle)
+  const [data, setData] = useState({})
+
+  const {channelHandle} = useParams()
+ 
+  useEffect(() => {
+    const getData = async() =>{
+      const channelData = await axios.get(`http://localhost:5050/api/channel/${channelHandle}`)
+      setData(channelData.data.channelData)
+    }
+
+    getData()
+  }, [])
+
+  console.log(data)
 
   return (
     <div>
@@ -30,10 +44,10 @@ export default function ChannelPage() {
           </div>
 
           <div>
-            <h2>Channel Name</h2>
+            <h2>{data.channelName}</h2>
             <p>
-              @Channel name <span>2.4M subscribers </span>{" "}
-              <span>•1.8K videos</span>
+              {data.channelHandle} <span>{data.subscribers} subscribers </span>{" "}
+              <span>{data.totalVideos} videos</span>
             </p>
             <p>Channel Description</p>
             <div>

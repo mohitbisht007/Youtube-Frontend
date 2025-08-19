@@ -12,7 +12,7 @@ export default function VideoCard({videoDetail}) {
           />
           <p>{videoDetail.title}</p>
         </div>
-        <p>Channel Name</p>
+        <p>{videoDetail.channel.channelName}</p>
         <div className="flex">
             <p>{videoDetail.views}</p>
             <p>4 months Old</p>

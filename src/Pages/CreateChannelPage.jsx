@@ -30,7 +30,7 @@ export default function CreateChannelPage() {
       }
     })
     const channelHandle =  res.data.channel.channelHandle
-    // navigate(`/@${channelHandle}`)
+    navigate(`/channel/${channelHandle}`)
 
     } catch (error) {
       console.log(error)

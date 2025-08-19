@@ -12,7 +12,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/watch/:id" element={<VideoPage />} />
-        <Route path="/msb" element={<ChannelPage />} />
+        <Route path="/channel/:channelHandle" element={<ChannelPage />} />
         <Route path="/login" element={<SignupPage />} />
         <Route path="/upload" element={<UploadVideoPage />} />
         <Route path="/create-channel" element={<CreateChannelPage />} />

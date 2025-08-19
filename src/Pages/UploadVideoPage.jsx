@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+const token = localStorage.getItem("token")
 
 export default function UploadVideoPage() {
   const navigate = useNavigate()
@@ -20,7 +21,12 @@ export default function UploadVideoPage() {
     const res = await axios.post("http://localhost:5050/api/uploads", {
         title: videoDetails.title,
         description: videoDetails.description,
-        videoURL: videoDetails.videoURL
+        videoURL: videoDetails.videoURL,
+    }, {
+      headers: {
+        Authorization: `JWT ${token}`,
+        "Content-Type": "application/json"
+      }
     })
  
     alert("Video SuccessFully Uploaded")

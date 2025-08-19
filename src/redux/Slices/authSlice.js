@@ -6,7 +6,7 @@ const storedUser = localStorage.getItem("user")
 const initialState = {
     token: storedToken || "",
     user: JSON.parse(storedUser) || null,
-    isAuth : storedToken ? true : false
+    isAuth : storedToken ? true : false,
 }
 
 const authSlice = createSlice({
@@ -17,7 +17,6 @@ const authSlice = createSlice({
             const {token, user} = action.payload
             state.token = token
             state.user = user
-            state.isAuth = true
             localStorage.setItem('user', JSON.stringify(user))
             localStorage.setItem('token', token)
         },
@@ -27,7 +26,7 @@ const authSlice = createSlice({
             state.isAuth = false
             localStorage.removeItem('user')
             localStorage.removeItem('token')
-        }
+        },
     }
 })
 
