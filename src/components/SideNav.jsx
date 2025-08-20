@@ -1,11 +1,12 @@
 import SideText from "./SideText";
 import SignInButton from "./SignInButton";
+import { Link } from "react-router-dom";
 
 export default function SideNav() {
   return (
     <div className="h-[100vh] p-3 overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 fixed w-[250px] z-100 top-20">
       <div className="p-2 text-[20px] flex flex-col border-b-1">
-        <SideText icon={<i class="fa-solid fa-house"></i>} text="Home"/>
+        <Link to="/" ><SideText icon={<i class="fa-solid fa-house"></i>} text="Home"/></Link>
         <SideText icon={<i class="fa-solid fa-video"></i>} text="Shorts"/>
         <SideText icon={<i class="fa-solid fa-hand-holding-dollar"></i>} text="Subscription"/>
       </div>

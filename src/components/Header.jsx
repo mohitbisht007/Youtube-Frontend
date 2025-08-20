@@ -6,16 +6,16 @@ import { logout } from "../redux/Slices/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import FilterButtons from "./FilterButtons";
+const token = localStorage.getItem("token");
 
 export default function Header() {
-
- const [channelData, setChannelData] = useState([])
+  const [userData, setUserData] = useState({});
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { user, isAuth } = useSelector((state) => state.auth);
-  console.log(user, isAuth);
 
   const [profileClicked, setProfileClikced] = useState(false);
 
@@ -26,12 +26,17 @@ export default function Header() {
   };
 
   useEffect(() => {
-    const getData = async() => {
-      const response = await axios.get()
-    }
-  })
+    const getData = async () => {
+      const response = await axios.get("http://localhost:5050/api/getUser", {
+        headers: {
+          Authorization: `JWT ${token}`,
+        },
+      });
+      setUserData(response.data.user);
+    };
 
- 
+    getData();
+  }, []);
 
   return (
     <nav className="h-[80px] flex justify-between p-2 fixed top-0 w-full z-30 bg-white">
@@ -58,9 +63,9 @@ export default function Header() {
       </div>
       <div>
         {isAuth ? (
-          <div>
+          <div className="flex gap-5">
             <Link to="/upload">
-              <button>Create Video</button>
+              <FilterButtons text="+ Create" />
             </Link>
             <img
               className="rounded-full border-1 h-[40px] w-[40px]"
@@ -77,13 +82,29 @@ export default function Header() {
 
       {profileClicked && (
         <div className="fixed right-20 top-10 z-50 w-[300px] h-[90vh] shadow-xl border border-[#e7e7e7] p-4 bg-white rounded">
-          <div>
-            <Link to="/create-channel">
-              <button>Create Channel</button>
-            </Link>
-          </div>
-          <div>
-            <button onClick={handleLogOut}>Sign Out</button>
+          {!userData.channel ? (
+            <div>
+              <Link to="/create-channel">
+                <button>Create Channel</button>
+              </Link>
+            </div>
+          ) : (
+            <div className="flex gap-5 border-b-2 p-2">
+              <img
+                className="rounded-full border-1 h-[40px] w-[40px]"
+                src={user.avatar}
+              />
+              <div>
+                <p>{userData.channel.channelName}</p>
+                <p>{userData.channel.channelHandle}</p>
+                <Link className="text-blue-500" to={`/channel/${userData.channel.channelHandle}`}>
+                  View Your Channel
+                </Link>
+              </div>
+            </div>
+          )}
+          <div className="p-3 flex justify-center items-center">
+            <button className="p-2 bg-amber-200" onClick={handleLogOut}>Sign Out</button>
           </div>
         </div>
       )}

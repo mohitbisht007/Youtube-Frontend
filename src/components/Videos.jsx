@@ -18,7 +18,7 @@ export default function Videos() {
 
 
   return (
-    <div className='ml-[250px] mt-[150px] grid grid-cols-3 px-3 gap-2'>
+    <div className='ml-[250px] mt-[150px] grid grid-cols-3 px-3 gap-5'>
         {allVideos.map(video => {
           return <Link to = {`/watch/${video._id}`} key={video._id}><VideoCard videoDetail = {video}/></Link>
         })}
