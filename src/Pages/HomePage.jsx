@@ -1,15 +1,11 @@
 import Filter from "../components/Filter";
-import Header from "../components/Header";
-import SideNav from "../components/SideNav";
 import Videos from "../components/Videos";
 
-export default function HomePage() {
+export default function HomePage({ sideNavOpen }) {
   return (
     <>
-      <Header />
-      <Filter/>
-      <SideNav />
-      <Videos/>
+      <Filter sideNavOpen={sideNavOpen} />
+      <Videos sideNavOpen={sideNavOpen} />
     </>
   );
 }

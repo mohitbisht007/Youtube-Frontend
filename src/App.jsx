@@ -5,12 +5,18 @@ import { Route, Routes } from "react-router-dom";
 import SignupPage from "./Pages/SignupPage";
 import UploadVideoPage from "./Pages/UploadVideoPage";
 import CreateChannelPage from "./Pages/CreateChannelPage";
+import Header from "./components/Header";
+import SideNav from "./components/SideNav";
+import { useState } from "react";
 
 export default function App() {
+  const [sideNavOpen, setSideNavOpen] = useState(false);
   return (
     <>
+      <Header onHamburgerClick={() => setSideNavOpen((prev) => !prev)} />
+      <SideNav open={sideNavOpen} onClose={() => setSideNavOpen(false)} />
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomePage sideNavOpen={sideNavOpen} />} />
         <Route path="/watch/:id" element={<VideoPage />} />
         <Route path="/channel/:channelHandle" element={<ChannelPage />} />
         <Route path="/login" element={<SignupPage />} />

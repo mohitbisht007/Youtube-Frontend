@@ -1,4 +1,4 @@
-import axios from "axios"
+import api from "../helpers/axiosInterceptor";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const token = localStorage.getItem('token')
@@ -20,7 +20,7 @@ export default function CreateChannelPage() {
   const handleSubmit = async(e) => {
     e.preventDefault()
     try {
-      const res = await axios.post("http://localhost:5050/api/createChannel", {
+      const res = await api.post("http://localhost:5050/api/createChannel", {
       channelName: channelInput.channelName,
       channelHandle: channelInput.channelHandle
     }, {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios"
+import api from "../helpers/axiosInterceptor";
 import { login } from "../redux/Slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +22,7 @@ export default function SignupPage() {
     const payload = hasAccount ? {email: userData.email, password: userData.password} : userData;
      
     try {
-      const res = await axios.post(endPoint, payload)
+      const res = await api.post(endPoint, payload)
       const {token, user} = res.data;
 
       if(hasAccount){

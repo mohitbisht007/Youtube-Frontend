@@ -1,27 +1,38 @@
-import axios from 'axios'
+import api from "../helpers/axiosInterceptor";
 import VideoCard from './VideoCard'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
-export default function Videos() {
-
+export default function Videos({ sideNavOpen }) {
   const [allVideos, setAllVideos] = useState([])
 
   useEffect(() => {
-    const getVideos = async() => {
-      const res = await axios.get("http://localhost:5050/api/allVideos")
+    const getVideos = async () => {
+      const res = await api.get("http://localhost:5050/api/allVideos")
       setAllVideos(res.data.allVideos)
     }
-
     getVideos()
   }, [])
 
-
   return (
-    <div className='ml-[250px] mt-[150px] grid grid-cols-3 px-3 gap-5'>
-        {allVideos.map(video => {
-          return <Link to = {`/watch/${video._id}`} key={video._id}><VideoCard videoDetail = {video}/></Link>
-        })}
+    <div className="relative mt-20">
+      {/* Overlay for mobile/tablet when sidenav is open */}
+      <div
+        
+      />
+      <div
+        className={`transition-all duration-300 pt-6 min-h-screen
+          ${sideNavOpen ? "md:ml-[250px] md:w-[calc(100%-250px)]" : "w-full ml-0"}
+        `}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 px-2 md:px-6 gap-5">
+          {allVideos.map(video => (
+            <Link to={`/watch/${video._id}`} key={video._id}>
+              <VideoCard videoDetail={video} />
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

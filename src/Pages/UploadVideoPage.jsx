@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from "../helpers/axiosInterceptor";
 import { useNavigate } from 'react-router-dom';
 const token = localStorage.getItem("token")
 
@@ -18,7 +18,7 @@ export default function UploadVideoPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await axios.post("http://localhost:5050/api/uploads", {
+    const res = await api.post("http://localhost:5050/api/uploads", {
         title: videoDetails.title,
         description: videoDetails.description,
         videoURL: videoDetails.videoURL,
