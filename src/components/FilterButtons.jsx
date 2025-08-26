@@ -1,9 +1,12 @@
 import React from 'react'
 
-export default function FilterButtons({text}) {
+export default function FilterButtons({ text, isActive, onClick }) {
   return (
-    <button className='bg-[#F2F2F2] py-1 px-3 rounded-md'>
-        {text}
+    <button
+      onClick={onClick}
+      className={`py-1 px-3 cursor-pointer rounded-md ${isActive ? "bg-black text-white" : "bg-[#F2F2F2] text-black"}`}
+    >
+      {text}
     </button>
-  )
+  );
 }

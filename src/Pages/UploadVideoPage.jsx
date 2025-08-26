@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import api from "../helpers/axiosInterceptor";
-import { useNavigate } from 'react-router-dom';
-const token = localStorage.getItem("token")
+import { useNavigate } from "react-router-dom";
+const token = localStorage.getItem("token");
 
 export default function UploadVideoPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [videoDetails, setVideoDetails] = useState({
-    title: '',
-    description: '',
-    videoURL: ''
+    title: "",
+    description: "",
+    videoURL: "",
+    category: "",
   });
 
   const handleChange = (e) => {
@@ -18,19 +19,24 @@ export default function UploadVideoPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await api.post("http://localhost:5050/api/uploads", {
+    await api.post(
+      "http://localhost:5050/api/uploads",
+      {
         title: videoDetails.title,
         description: videoDetails.description,
         videoURL: videoDetails.videoURL,
-    }, {
-      headers: {
-        Authorization: `JWT ${token}`,
-        "Content-Type": "application/json"
+        category: videoDetails.category,
+      },
+      {
+        headers: {
+          Authorization: `JWT ${token}`,
+          "Content-Type": "application/json",
+        },
       }
-    })
- 
-    alert("Video SuccessFully Uploaded")
-    navigate("/")
+    );
+
+    alert("Video SuccessFully Uploaded");
+    navigate("/");
   };
 
   return (
@@ -38,12 +44,21 @@ export default function UploadVideoPage() {
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8">
         <div className="flex flex-col items-center mb-6">
           <i className="fa-brands fa-youtube text-5xl text-[#FF0033] mb-2"></i>
-          <h1 className="font-bold text-2xl text-gray-900 mb-1">Upload Video</h1>
-          <p className="text-gray-500 text-sm">Share your content with the world!</p>
+          <h1 className="font-bold text-2xl text-gray-900 mb-1">
+            Upload Video
+          </h1>
+          <p className="text-gray-500 text-sm">
+            Share your content with the world!
+          </p>
         </div>
         <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="title" className="block text-gray-700 font-semibold mb-1">Title</label>
+            <label
+              htmlFor="title"
+              className="block text-gray-700 font-semibold mb-1"
+            >
+              Title
+            </label>
             <input
               type="text"
               id="title"
@@ -56,7 +71,12 @@ export default function UploadVideoPage() {
             />
           </div>
           <div>
-            <label htmlFor="description" className="block text-gray-700 font-semibold mb-1">Description</label>
+            <label
+              htmlFor="description"
+              className="block text-gray-700 font-semibold mb-1"
+            >
+              Description
+            </label>
             <textarea
               id="description"
               name="description"
@@ -69,7 +89,12 @@ export default function UploadVideoPage() {
             />
           </div>
           <div>
-            <label htmlFor="videoURL" className="block text-gray-700 font-semibold mb-1">Video URL</label>
+            <label
+              htmlFor="videoURL"
+              className="block text-gray-700 font-semibold mb-1"
+            >
+              Video URL
+            </label>
             <input
               type="url"
               id="videoURL"
@@ -80,6 +105,35 @@ export default function UploadVideoPage() {
               placeholder="Paste your video URL"
               required
             />
+          </div>
+
+          <div>
+            <label
+              htmlFor="category"
+              className="block text-gray-700 font-semibold mb-1"
+            >
+              Video Category
+            </label>
+            <select
+              id="category"
+              name="category"
+              value={videoDetails.category}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF0033] transition bg-white"
+              required
+            >
+              <option value="">Select Category</option>
+              <option value="Gaming">Gaming</option>
+              <option value="Music">Music</option>
+              <option value="Education">Education</option>
+              <option value="Travel">Travel</option>
+              <option value="Sports">Sports</option>
+              <option value="Podcast">Podcast</option>
+               <option value="News">News</option>
+              <option value="Movies">Movies</option>
+              <option value="Technology">Technology</option>
+              <option value="Comedy">Comedy</option>
+            </select>
           </div>
           <button
             type="submit"

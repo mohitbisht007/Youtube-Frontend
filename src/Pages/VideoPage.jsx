@@ -8,6 +8,8 @@ import { useParams } from "react-router-dom";
 export default function VideoPage() {
   const [video, setVideo] = useState({});
   const [showMore, setShowMore] = useState(false);
+  const [subscribed, setSubscribed] = useState(false);
+  const token = localStorage.getItem("token");
 
   const { id } = useParams();
 
@@ -19,6 +21,27 @@ export default function VideoPage() {
     };
     getVideo();
   }, [id]);
+
+  const handleSubscribe = async () => {
+    try {
+      await api.put(
+        "http://localhost:5050/api/subscribing",
+        {
+          channelId: video.channel._id,
+        },
+        {
+          headers: {
+            Authorization: `JWT ${token}`,
+          },
+        }
+      );
+      setSubscribed(!subscribed);
+      // Optionally show a success message
+    } catch (error) {
+      console.error("Subscribe error:", error.response?.data || error.message);
+      // Optionally show an error message to the user
+    }
+  };
 
   return (
     <div className="w-full min-h-screen bg-gray-50 pt-[90px] px-0 md:px-6 flex flex-col md:flex-row gap-8">
@@ -35,7 +58,9 @@ export default function VideoPage() {
           ></iframe>
         </div>
         {/* Video Title */}
-        <h1 className="font-bold text-xl md:text-2xl mb-2 px-2">{video?.title}</h1>
+        <h1 className="font-bold text-xl md:text-2xl mb-2 px-2">
+          {video?.title}
+        </h1>
         {/* Channel & Actions */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center px-2 mb-4 gap-4">
           <div className="flex items-center gap-3">
@@ -45,21 +70,35 @@ export default function VideoPage() {
               alt={video?.channel?.channelName}
             />
             <div>
-              <p className="font-semibold text-gray-900">{video?.channel?.channelName}</p>
-              <p className="text-xs text-gray-500">{video?.channel?.subscribers} subscribers</p>
+              <p className="font-semibold text-gray-900">
+                {video?.channel?.channelName}
+              </p>
+              <p className="text-xs text-gray-500">
+                {video?.channel?.subscribers} subscribers
+              </p>
             </div>
             <button className="ml-2 bg-black text-white px-4 py-1 rounded-md font-semibold shadow hover:bg-gray-800 transition">
               Join
             </button>
-            <FilterButtons text="Subscribe" />
+            {!subscribed ? (
+              <FilterButtons onClick={handleSubscribe} text="Subscribe" />
+            ) : (
+              <FilterButtons text="Unsubscribe" />
+            )}
           </div>
           <div className="flex gap-2">
             <button className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200">
               {video?.like} <i className="fa-solid fa-thumbs-up"></i>
             </button>
-            <button className="bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200">Share</button>
-            <button className="bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200">Download</button>
-            <button className="bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200">Thanks</button>
+            <button className="bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200">
+              Share
+            </button>
+            <button className="bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200">
+              Download
+            </button>
+            <button className="bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200">
+              Thanks
+            </button>
           </div>
         </div>
         {/* Video Description */}
@@ -70,7 +109,11 @@ export default function VideoPage() {
             <span>#Hashtags</span>
           </div>
           <div>
-            <p className={`${showMore ? "" : "line-clamp-3"} text-gray-700 transition-all duration-200`}>
+            <p
+              className={`${
+                showMore ? "" : "line-clamp-3"
+              } text-gray-700 transition-all duration-200`}
+            >
               {video?.description}
             </p>
             {video?.description && video?.description.length > 0 && (
@@ -97,8 +140,12 @@ export default function VideoPage() {
               <p className="font-semibold">@username</p>
               <p className="text-gray-700">Comment</p>
               <div className="flex gap-2 mt-1">
-                <button className="text-gray-500 hover:text-blue-500">Like</button>
-                <button className="text-gray-500 hover:text-red-500">Dislike</button>
+                <button className="text-gray-500 hover:text-blue-500">
+                  Like
+                </button>
+                <button className="text-gray-500 hover:text-red-500">
+                  Dislike
+                </button>
               </div>
             </div>
           </div>

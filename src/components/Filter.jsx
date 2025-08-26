@@ -1,8 +1,11 @@
 import React, { useRef } from "react";
 import FilterButtons from "./FilterButtons";
+import { useState } from "react";
 
-export default function Filter({ sideNavOpen }) {
+export default function Filter({ sideNavOpen, setFilter, videos }) {
   const scrollRef = useRef();
+
+  const [activeFilter, setActiveFilter] = useState("All");
 
   const scrollRight = () => {
     if (scrollRef.current) {
@@ -19,7 +22,9 @@ export default function Filter({ sideNavOpen }) {
   return (
     <div
       className={`sticky top-[80px] z-20 bg-white md:px-6 px-2 flex items-center ${
-        sideNavOpen ? "md:ml-[250px] md:w-[calc(100%-250px)]" : "md:w-full md:ml-0"
+        sideNavOpen
+          ? "md:ml-[250px] md:w-[calc(100%-250px)]"
+          : "md:w-full md:ml-0"
       }`}
     >
       <button
@@ -34,17 +39,25 @@ export default function Filter({ sideNavOpen }) {
         className="flex gap-3 py-2 px-2 md:px-5 overflow-x-auto scrollbar-hide w-full"
         style={{ scrollBehavior: "smooth" }}
       >
-        <FilterButtons text="All" />
-        <FilterButtons text="Gaming" />
-        <FilterButtons text="Valorant" />
-        <FilterButtons text="Live" />
-        <FilterButtons text="Music" />
-        <FilterButtons text="Education" />
-        <FilterButtons text="BGMI" />
-        <FilterButtons text="Travel" />
-        <FilterButtons text="Extra1" />
-        <FilterButtons text="Extra2" />
-        <FilterButtons text="Extra3" />
+        <FilterButtons
+          text="All"
+          isActive={activeFilter === "All"}
+          onClick={() => {
+            setActiveFilter("All");
+            setFilter("All");
+          }}
+        />
+        {videos.map((video, idx) => (
+          <FilterButtons
+            key={idx}
+            text={video.category}
+            isActive={activeFilter === video.category}
+            onClick={() => {
+              setActiveFilter(video.category);
+              setFilter(video.category);
+            }}
+          />
+        ))}
       </div>
       {/* Scroll right button, only if overflow */}
       <button

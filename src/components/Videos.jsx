@@ -3,22 +3,13 @@ import VideoCard from './VideoCard'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
-export default function Videos({ sideNavOpen }) {
-  const [allVideos, setAllVideos] = useState([])
+export default function Videos({ sideNavOpen, videos, loading}) {
 
-  useEffect(() => {
-    const getVideos = async () => {
-      const res = await api.get("http://localhost:5050/api/allVideos")
-      setAllVideos(res.data.allVideos)
-    }
-    getVideos()
-  }, [])
+  if(loading) return <h2>Loading.....</h2>
 
   return (
     <div className="relative mt-20">
-      {/* Overlay for mobile/tablet when sidenav is open */}
       <div
-        
       />
       <div
         className={`transition-all duration-300 pt-6 min-h-screen
@@ -26,7 +17,7 @@ export default function Videos({ sideNavOpen }) {
         `}
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 px-2 md:px-6 gap-5">
-          {allVideos.map(video => (
+          {videos.map(video => (
             <Link to={`/watch/${video._id}`} key={video._id}>
               <VideoCard videoDetail={video} />
             </Link>

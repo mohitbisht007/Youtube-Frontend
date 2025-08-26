@@ -10,7 +10,6 @@ const user = JSON.parse(localStorage.getItem("user"));
 
 export default function ChannelPage() {
   const [data, setData] = useState({});
-  const [sideNavOpen, setSideNavOpen] = useState(false);
 
   const { channelHandle } = useParams();
 
@@ -23,6 +22,12 @@ export default function ChannelPage() {
     };
     getData();
   }, []);
+
+  const handleSubscribe = async() => {
+    await api.put("http://localhost:5050/api/subscribing", {
+      channelId: data._id
+    })  
+  }
 
   return (
     <div className="pt-[90px] max-w-[1200px] m-auto">
@@ -61,7 +66,7 @@ export default function ChannelPage() {
               </div>
             ) : (
               <div className="flex gap-3 flex-wrap">
-                <button className="bg-black text-white py-1 px-4 rounded-md font-semibold shadow hover:bg-gray-800 transition">
+                <button onClick={handleSubscribe} className="bg-black text-white py-1 px-4 rounded-md font-semibold shadow hover:bg-gray-800 transition">
                   Subscribe
                 </button>
                 <FilterButtons text="Join" />
