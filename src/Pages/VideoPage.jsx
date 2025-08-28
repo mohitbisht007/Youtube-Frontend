@@ -1,47 +1,103 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import thumbnail from "../assets/thumbnail.jpg";
 import FilterButtons from "../components/FilterButtons";
 import RecommendedVideo from "../components/RecommendedVideo";
-import api from "../helpers/axiosInterceptor";
+import Comments from "../components/Comments";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchVideos } from "../redux/Slices/videoSlices";
+import { Link } from "react-router-dom";
+import api from "../helpers/axiosInterceptor";
+import { likeVideo, dislikeVideo } from "../redux/Slices/userSlice";
+const token = localStorage.getItem('token')
+
+import {
+  subscribeChannel,
+  unSubscribeChannel,
+} from "../redux/Slices/userSlice";
 
 export default function VideoPage() {
   const [video, setVideo] = useState({});
   const [showMore, setShowMore] = useState(false);
-  const [subscribed, setSubscribed] = useState(false);
-  const token = localStorage.getItem("token");
+  const { videos, loading, error } = useSelector((state) => state.videos);
+  const { user } = useSelector((state) => state.user);
+  const [comment, setComment] = useState("")
+  
+  const dispatch = useDispatch();
 
   const { id } = useParams();
 
   useEffect(() => {
-    const getVideo = async () => {
-      const res = await api.get("http://localhost:5050/api/allVideos");
-      const data = res.data.allVideos.find((v) => v._id === id);
-      setVideo(data);
-    };
-    getVideo();
-  }, [id]);
+    if (videos.length > 0) {
+      // when videos already in store
+      const selectedVideo = videos.find((v) => v._id === id);
+      setVideo(selectedVideo || {});
+    } else {
+      dispatch(fetchVideos());
+    }
+  }, [id, videos, dispatch]);
+
+  const videoLiked = user?.likedVideos?.includes(id);
+  console.log(user);
 
   const handleSubscribe = async () => {
-    try {
-      await api.put(
-        "http://localhost:5050/api/subscribing",
-        {
-          channelId: video.channel._id,
+    if (user.subscriptions.includes(video.channel._id)) {
+      dispatch(unSubscribeChannel(video.channel._id));
+      setVideo((prev) => ({
+        ...prev,
+        channel: {
+          ...prev.channel,
+          subscribers: prev.channel.subscribers - 1,
         },
-        {
-          headers: {
-            Authorization: `JWT ${token}`,
-          },
-        }
-      );
-      setSubscribed(!subscribed);
-      // Optionally show a success message
-    } catch (error) {
-      console.error("Subscribe error:", error.response?.data || error.message);
-      // Optionally show an error message to the user
+      }));
+    } else {
+      dispatch(subscribeChannel(video.channel._id));
+      setVideo((prev) => ({
+        ...prev,
+        channel: {
+          ...prev.channel,
+          subscribers: prev.channel.subscribers + 1,
+        },
+      }));
     }
   };
+
+  const handleLike = () => {
+    if (videoLiked) {
+      // dislike
+      dispatch(dislikeVideo(id));
+      setVideo((prev) => ({ ...prev, likes: prev.likes - 1 }));
+    } else {
+      // like
+      dispatch(likeVideo(id));
+      setVideo((prev) => ({ ...prev, likes: prev.likes + 1 }));
+    }
+  };
+
+  const handleComment = async(e) => {
+    e.preventDefault()
+    const res = await api.put(`http://localhost:5050/api/comment/${video._id}`,
+      {comment: comment},
+      {headers: {Authorization: `JWY ${token}`, "Content-Type": "application/json"}, },
+    )
+
+    const newComment = await res.data.comment
+    setVideo((prev) => ({
+      ...prev,
+      comments: [...prev.comments, {text: newComment}]
+    }))
+
+    setComment("")
+  }
+
+  console.log(comment)
+
+  console.log(video)
+
+
+  if (!video || !video._id) {
+    return <h2 className="pt-[90px] text-center">Loading video...</h2>;
+  }
 
   return (
     <div className="w-full min-h-screen bg-gray-50 pt-[90px] px-0 md:px-6 flex flex-col md:flex-row gap-8">
@@ -64,31 +120,43 @@ export default function VideoPage() {
         {/* Channel & Actions */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center px-2 mb-4 gap-4">
           <div className="flex items-center gap-3">
-            <img
-              className="rounded-full border h-12 w-12 object-cover bg-gray-200"
-              src={video?.channel?.avatar}
-              alt={video?.channel?.channelName}
-            />
+            <Link to={`/channel/${video.channel.channelHandle}`}>
+              <img
+                className="rounded-full border h-12 w-12 object-cover bg-gray-200"
+                src={video?.channel?.avatar}
+                alt={video?.channel?.channelName}
+              />
+            </Link>
             <div>
-              <p className="font-semibold text-gray-900">
-                {video?.channel?.channelName}
-              </p>
+              <Link to={`/channel/${video.channel.channelHandle}`}>
+                <p className="font-semibold text-gray-900">
+                  {video?.channel?.channelName}
+                </p>
+              </Link>
               <p className="text-xs text-gray-500">
                 {video?.channel?.subscribers} subscribers
               </p>
             </div>
-            <button className="ml-2 bg-black text-white px-4 py-1 rounded-md font-semibold shadow hover:bg-gray-800 transition">
-              Join
+            <button
+              onClick={handleSubscribe}
+              className="ml-2 cursor-pointer bg-black text-white px-4 py-1 rounded-md font-semibold shadow hover:bg-gray-800 transition"
+            >
+              {user?.subscriptions?.includes(video.channel._id)
+                ? "Unsubscribe"
+                : "Subscribe"}
             </button>
-            {!subscribed ? (
-              <FilterButtons onClick={handleSubscribe} text="Subscribe" />
-            ) : (
-              <FilterButtons text="Unsubscribe" />
-            )}
           </div>
           <div className="flex gap-2">
-            <button className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200">
-              {video?.like} <i className="fa-solid fa-thumbs-up"></i>
+            <button
+              onClick={handleLike}
+              className="flex items-center gap-1 cursor-pointer bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200"
+            >
+              {videoLiked ? (
+                <i class="fa-solid fa-thumbs-up"></i>
+              ) : (
+                <i class="fa-regular fa-thumbs-up"></i>
+              )}{" "}
+              {video?.likes}
             </button>
             <button className="bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200">
               Share
@@ -126,30 +194,43 @@ export default function VideoPage() {
             )}
           </div>
         </div>
+
         {/* Comments */}
+
         <div className="w-full bg-white rounded-md p-4 shadow">
-          <h2 className="font-bold text-lg mb-4">175 Comments</h2>
-          {/* Example comment */}
-          <div className="flex gap-3 mb-4">
+          {/* Comment Input */}
+          <form className="flex items-start gap-3 mb-6" onSubmit={handleComment}>
             <img
-              className="rounded-full border h-10 w-10 object-cover bg-gray-200"
-              src="/default-avatar.png"
-              alt="User"
+              className="w-10 h-10 rounded-full object-cover border"
+              src={user?.avatar || "/default-avatar.png"}
+              alt="User Avatar"
             />
-            <div>
-              <p className="font-semibold">@username</p>
-              <p className="text-gray-700">Comment</p>
-              <div className="flex gap-2 mt-1">
-                <button className="text-gray-500 hover:text-blue-500">
-                  Like
-                </button>
-                <button className="text-gray-500 hover:text-red-500">
-                  Dislike
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Add a comment..."
+                className="w-full border-b border-gray-300 focus:border-gray-500 focus:outline-none pb-2 text-sm"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              />
+              <div className="flex justify-end gap-2 mt-2">
+                <button
+                  type="submit"
+                  className="px-4 py-1 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  Comment
                 </button>
               </div>
             </div>
-          </div>
-          {/* Add more comments here */}
+          </form>
+
+          {/* Comments Count */}
+          <h2 className="font-bold text-lg mb-4">
+            {video?.comments?.length || 0} Comments
+          </h2>
+
+          {/* Comment List */}
+          {video?.comments?.map((comment) => <Comments comment={comment?.text}/>)}
         </div>
       </div>
       {/* Recommended Videos Sidebar */}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "../helpers/axiosInterceptor";
-import { login } from "../redux/Slices/authSlice";
+import { login } from "../redux/Slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -27,7 +27,7 @@ export default function SignupPage() {
 
       if(hasAccount){
         dispatch(login({token, user}))
-      navigate('/')
+        navigate('/')
       } else {
         setHasAccount(true)
       }

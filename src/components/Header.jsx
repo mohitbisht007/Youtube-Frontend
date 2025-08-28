@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import SignInButton from "./SignInButton";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { logout } from "../redux/Slices/authSlice";
+import { logout } from "../redux/Slices/userSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import api from "../helpers/axiosInterceptor";
@@ -13,7 +13,7 @@ export default function Header({ onHamburgerClick }) {
   const [userData, setUserData] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, isAuth } = useSelector((state) => state.auth);
+  const { user, isAuth } = useSelector((state) => state.user);
   const [profileClicked, setProfileClikced] = useState(false);
   const [mobileSearch, setMobileSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");

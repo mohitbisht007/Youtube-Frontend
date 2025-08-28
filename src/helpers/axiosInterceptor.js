@@ -1,12 +1,20 @@
 import axios from "axios";
-import store from "../redux/store";
-import { logout } from "../redux/Slices/authSlice";
 
 const api = axios.create();
 
+// Request interceptor to attach token
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Response interceptor to catch 401
 api.interceptors.response.use(
-  response => response,
-  error => {
+  (response) => response,
+  (error) => {
     const isAuthRequest = error.config?.headers?.Authorization;
     if (
       isAuthRequest &&
@@ -14,7 +22,9 @@ api.interceptors.response.use(
       error.response.status === 401 &&
       error.response.data?.message?.toLowerCase().includes("token")
     ) {
-      store.dispatch(logout());
+      // instead of store.dispatch(logout())
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
     }
     return Promise.reject(error);
   }
