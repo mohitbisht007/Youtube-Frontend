@@ -3,11 +3,11 @@ import api from "../helpers/axiosInterceptor";
 import { login } from "../redux/Slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Popup from "../components/Popup";
 
 export default function SignupPage() {
-
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [hasAccount, setHasAccount] = useState(true);
   const [userData, setUserData] = useState({
     username: "",
@@ -15,25 +15,32 @@ export default function SignupPage() {
     password: "",
   });
 
-  const handleSubmit = async(e) => {
+  const [popup, setPopup] = useState(null);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const endPoint = hasAccount ? "http://localhost:5050/api/login" : "http://localhost:5050/api/signup";
-    const payload = hasAccount ? {email: userData.email, password: userData.password} : userData;
-     
+    const endPoint = hasAccount
+      ? "http://localhost:5050/api/login"
+      : "http://localhost:5050/api/signup";
+    const payload = hasAccount
+      ? { email: userData.email, password: userData.password }
+      : userData;
+
     try {
-      const res = await api.post(endPoint, payload)
-      const {token, user} = res.data;
+      const res = await api.post(endPoint, payload);
+      const { token, user } = res.data;
 
-      if(hasAccount){
-        dispatch(login({token, user}))
-        navigate('/')
+      if (hasAccount) {
+        dispatch(login({ token, user }));
+        navigate("/");
       } else {
-        setHasAccount(true)
+        setHasAccount(true);
       }
-
+     
     } catch (error) {
-      console.log(error)
+      const message = error.response?.data?.message || "Something went wrong!";
+      setPopup({ type: "error", message });
     }
   };
 
@@ -46,6 +53,13 @@ export default function SignupPage() {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-black via-[#1a1a1a] to-[#FF0033]">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
+        {popup && (
+          <Popup
+            type={popup.type}
+            message={popup.message}
+            onClose={() => setPopup(null)}
+          />
+        )}
         <div className="flex flex-col items-center mb-6">
           <i className="fa-brands fa-youtube text-5xl text-[#FF0033] mb-2"></i>
           <h1 className="font-bold text-2xl text-gray-900 mb-1">

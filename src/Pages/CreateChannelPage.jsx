@@ -1,46 +1,80 @@
 import api from "../helpers/axiosInterceptor";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-const token = localStorage.getItem('token')
+const token = localStorage.getItem("token");
+import Popup from "../components/Popup";
 
 export default function CreateChannelPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  const [popup, setPopup] = useState(null);
 
   const [channelInput, setChannelInput] = useState({
     channelName: "",
-    channelHandle: ""
-  })
+    channelHandle: "",
+  });
 
   const handleOnChange = (e) => {
     setChannelInput((prev) => {
-      return {...prev, [e.target.name]: e.target.value}
-    })
-  }
+      return { ...prev, [e.target.name]: e.target.value };
+    });
+  };
 
-  const handleSubmit = async(e) => {
-    e.preventDefault()
+  const [channelImage, setChannelImage] = useState(null);
+
+  const handleImageChange = (e) => {
+    setChannelImage(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const res = await api.post("http://localhost:5050/api/createChannel", {
-      channelName: channelInput.channelName,
-      channelHandle: channelInput.channelHandle
-    }, {
-      headers: {
-        Authorization: `JWT ${token}`,
-        "Content-Type": "application/json"
-      }
-    })
-    const channelHandle =  res.data.channel.channelHandle
-    navigate(`/channel/${channelHandle}`)
+      const formData = new FormData();
+      formData.append("channelName", channelInput.channelName);
+      formData.append("channelHandle", channelInput.channelHandle);
 
+      if (channelImage) {
+        formData.append("channelAvatar", channelImage);
+      }
+
+      const res = await api.post(
+        "http://localhost:5050/api/createChannel",
+        formData,
+        {
+          headers: {
+            Authorization: `JWT ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log(res);
+      const message  = res?.data?.message
+      setPopup({ type: "success", message });
+      const channelHandle = res.data.channel.channelHandle;
+      setTimeout(() => {
+        navigate(`/channel/${channelHandle}`);
+      }, 3000);
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      const message =  error?.response?.data?.message
+      setPopup({ type: "error", message});
     }
-  }
-  
+  };
 
   return (
     <div className="h-screen w-full flex items-center justify-center bg-gray-100">
-      <form className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md space-y-6" onSubmit={handleSubmit}>
+      {popup && (
+        <Popup
+          type={popup.type}
+          message={popup.message}
+          onClose={() => setPopup(null)}
+        />
+      )}
+      <form
+        className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md space-y-6"
+        onSubmit={handleSubmit}
+      >
         <h2 className="text-2xl font-bold text-center text-gray-800">
           Create Your Channel
         </h2>
@@ -72,6 +106,18 @@ export default function CreateChannelPage() {
             onChange={handleOnChange}
             placeholder="@yourhandle"
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Channel Avatar
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="w-full px-4 py-2 border rounded-lg"
           />
         </div>
 

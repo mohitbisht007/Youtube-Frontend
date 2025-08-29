@@ -9,7 +9,6 @@ export default function HomePage({ sideNavOpen }) {
   const dispatch = useDispatch()
   const {videos, loading, error} = useSelector((state) => state.videos)
   const [filter, setFilter] = useState("All");
-  console.log(videos)
 
   useEffect(() => {
     dispatch(fetchVideos())

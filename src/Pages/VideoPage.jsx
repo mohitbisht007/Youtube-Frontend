@@ -38,7 +38,6 @@ export default function VideoPage() {
   }, [id, videos, dispatch]);
 
   const videoLiked = user?.likedVideos?.includes(id);
-  console.log(user);
 
   const handleSubscribe = async () => {
     if (user.subscriptions.includes(video.channel._id)) {
@@ -90,10 +89,7 @@ export default function VideoPage() {
     setComment("")
   }
 
-  console.log(comment)
-
-  console.log(video)
-
+  console.log(user)
 
   if (!video || !video._id) {
     return <h2 className="pt-[90px] text-center">Loading video...</h2>;
@@ -123,7 +119,7 @@ export default function VideoPage() {
             <Link to={`/channel/${video.channel.channelHandle}`}>
               <img
                 className="rounded-full border h-12 w-12 object-cover bg-gray-200"
-                src={video?.channel?.avatar}
+                src={video?.channel?.channelAvatar}
                 alt={video?.channel?.channelName}
               />
             </Link>
@@ -152,9 +148,9 @@ export default function VideoPage() {
               className="flex items-center gap-1 cursor-pointer bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200"
             >
               {videoLiked ? (
-                <i class="fa-solid fa-thumbs-up"></i>
+                <i className="fa-solid fa-thumbs-up"></i>
               ) : (
-                <i class="fa-regular fa-thumbs-up"></i>
+                <i className="fa-regular fa-thumbs-up"></i>
               )}{" "}
               {video?.likes}
             </button>
@@ -230,7 +226,7 @@ export default function VideoPage() {
           </h2>
 
           {/* Comment List */}
-          {video?.comments?.map((comment) => <Comments comment={comment?.text}/>)}
+          {video?.comments?.map((comment) => <Comments key={comment._id} comment={comment?.text}/>)}
         </div>
       </div>
       {/* Recommended Videos Sidebar */}

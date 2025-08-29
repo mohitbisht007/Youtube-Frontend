@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import api from "../helpers/axiosInterceptor";
 import { useNavigate } from "react-router-dom";
 const token = localStorage.getItem("token");
+import Popup from "../components/Popup";
 
 export default function UploadVideoPage() {
   const navigate = useNavigate();
+  const [popup, setPopup] = useState(null)
 
   const [videoDetails, setVideoDetails] = useState({
     title: "",
@@ -19,7 +21,8 @@ export default function UploadVideoPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await api.post(
+    try {
+      await api.post(
       "http://localhost:5050/api/uploads",
       {
         title: videoDetails.title,
@@ -35,12 +38,26 @@ export default function UploadVideoPage() {
       }
     );
 
-    alert("Video SuccessFully Uploaded");
-    navigate("/");
+    const message = "Video Succesfully Uploaded"
+    setPopup({type: "success", message})
+    setTimeout(() => {
+      navigate("/")
+    }, 3000)
+    } catch (error) {
+      const message = error?.response?.data?.message
+      setPopup({type: "error", message})
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-[#FF0033] py-10">
+      {popup && (
+                <Popup
+                  type={popup.type}
+                  message={popup.message}
+                  onClose={() => setPopup(null)}
+                />
+              )}
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8">
         <div className="flex flex-col items-center mb-6">
           <i className="fa-brands fa-youtube text-5xl text-[#FF0033] mb-2"></i>

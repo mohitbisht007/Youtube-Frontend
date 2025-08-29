@@ -19,6 +19,8 @@ export default function Header({ onHamburgerClick }) {
   const [searchValue, setSearchValue] = useState("");
   const location = useLocation()
 
+console.log(user)
+
   const handleLogOut = () => {
     dispatch(logout());
     navigate("/");
@@ -39,8 +41,10 @@ export default function Header({ onHamburgerClick }) {
       });
       setUserData(response.data.user);
     };
-    getData();
-  }, []);
+    if(token && isAuth){
+       getData();
+    }
+  }, [isAuth, token]);
 
   // Mobile search submit handler (replace with your search logic)
   const handleSearch = (e) => {

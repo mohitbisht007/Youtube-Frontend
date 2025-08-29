@@ -9,9 +9,12 @@ export default function VideoCard({ videoDetail }) {
         />
       </div>
       <div className="flex gap-3 mt-2">
-        <div className="flex">
-          <img className="rounded-full border-1 h-[40px] w-[40px]" />
-        </div>
+        <img
+          src={videoDetail?.channel?.channelAvatar}
+          alt="channel avatar"
+          className="h-12 w-12 rounded-full border object-cover mt-1"
+        />
+
         <div>
           <p className="font-bold">{videoDetail?.title}</p>
           <div className="flex gap-3 text-sm text-gray-600">

@@ -45,7 +45,7 @@ export default function ChannelPage() {
       <div className="w-full flex flex-col md:flex-row gap-6 items-center md:items-start mt-[20px]">
         <div>
           <img
-            src={channel?.avatar || "/default-avatar.png"}
+            src={channel?.channelAvatar || "/default-avatar.png"}
             alt="Channel Avatar"
             className="w-[120px] h-[120px] md:w-[150px] md:h-[150px] border-4 border-white rounded-full shadow-lg object-cover bg-gray-200"
           />
