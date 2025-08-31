@@ -5,7 +5,7 @@ import api from "../../helpers/axiosInterceptor";
 export const fetchVideos = createAsyncThunk(
   "videos/fetchVideos",
   async () => {
-    const res = await api.get("http://localhost:5050/api/allVideos");
+    const res = await api.get("/api/allVideos");
     return res.data.allVideos;
   }
 );
