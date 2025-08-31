@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchChannel } from "../redux/Slices/channelSlice";
 import { subscribeChannel, unSubscribeChannel } from "../redux/Slices/userSlice";
+import { Link } from "react-router-dom";
 
 export default function ChannelPage() {
   const { channelHandle } = useParams();
@@ -29,6 +30,8 @@ export default function ChannelPage() {
   if (loading) {
     return <h2>Loading....</h2>;
   }
+
+  console.log(user, channel)
 
   return (
     <div className="pt-[90px] max-w-[1200px] m-auto">
@@ -59,10 +62,10 @@ export default function ChannelPage() {
             <span className="ml-2">{channel?.subscribers} subscribers</span>
             <span className="ml-2">{channel?.totalVideos} videos</span>
           </p>
-          <p className="text-gray-500 mb-3">Channel Description</p>
-          {user?.id === channel?.channelOwner ? (
+          <p className="text-gray-500 mb-3">{channel?.channelDescription}</p>
+          {user?._id === channel?.channelOwner ? (
             <div className="flex gap-3 flex-wrap">
-              <FilterButtons text="Customise Channel" />
+              <Link to={`/customize-channel/${channel?.channelHandle}`}><FilterButtons text="Customise Channel" /></Link>
               <FilterButtons text="Edit Videos" />
             </div>
           ) : (

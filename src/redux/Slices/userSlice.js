@@ -16,7 +16,9 @@ export const subscribeChannel = createAsyncThunk(
       );
       return res.data.subscriptions;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || "Failed to subscribe");
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to subscribe"
+      );
     }
   }
 );
@@ -34,7 +36,9 @@ export const unSubscribeChannel = createAsyncThunk(
       );
       return res.data.subscriptions;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || "Failed to unsubscribe");
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to unsubscribe"
+      );
     }
   }
 );
@@ -51,7 +55,9 @@ export const likeVideo = createAsyncThunk(
       );
       return videoId; // return the liked video id
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || "Failed to like video");
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to like video"
+      );
     }
   }
 );
@@ -68,7 +74,9 @@ export const dislikeVideo = createAsyncThunk(
       );
       return videoId;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || "Failed to unlike video");
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to unlike video"
+      );
     }
   }
 );
@@ -80,7 +88,7 @@ const storedUser = localStorage.getItem("user");
 
 const initialState = {
   token: storedToken || "",
-  user: JSON.parse(storedUser) || null,
+  user: storedUser ? JSON.parse(storedUser) : null,
   isAuth: !!storedToken,
   loading: false,
   error: null,
@@ -92,6 +100,7 @@ const userSlice = createSlice({
   reducers: {
     login: (state, action) => {
       const { token, user } = action.payload;
+      console.log("👉 Saving new user to Redux + LocalStorage:", user.username);
       state.token = token;
       state.user = user;
       state.isAuth = true;
@@ -99,6 +108,7 @@ const userSlice = createSlice({
       localStorage.setItem("token", token);
     },
     logout: (state) => {
+      console.log("👉 Logging out, clearing storage");
       state.token = "";
       state.user = null;
       state.isAuth = false;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import api from "../helpers/axiosInterceptor";
 import { login } from "../redux/Slices/userSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Popup from "../components/Popup";
 
@@ -31,6 +31,7 @@ export default function SignupPage() {
       const res = await api.post(endPoint, payload);
       const { token, user } = res.data;
 
+      console.log(res.data)
       if (hasAccount) {
         dispatch(login({ token, user }));
         navigate("/");

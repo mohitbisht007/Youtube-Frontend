@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const token = localStorage.getItem("token");
 import Popup from "../components/Popup";
+import { login } from "../redux/Slices/userSlice";
+import { useDispatch } from "react-redux";
 
 export default function CreateChannelPage() {
   const navigate = useNavigate();
@@ -26,41 +28,50 @@ export default function CreateChannelPage() {
     setChannelImage(e.target.files[0]);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append("channelName", channelInput.channelName);
-      formData.append("channelHandle", channelInput.channelHandle);
+  const dispatch = useDispatch();
 
-      if (channelImage) {
-        formData.append("channelAvatar", channelImage);
-      }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const formData = new FormData();
+    formData.append("channelName", channelInput.channelName);
+    formData.append("channelHandle", channelInput.channelHandle);
 
-      const res = await api.post(
-        "http://localhost:5050/api/createChannel",
-        formData,
-        {
-          headers: {
-            Authorization: `JWT ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      console.log(res);
-      const message  = res?.data?.message
-      setPopup({ type: "success", message });
-      const channelHandle = res.data.channel.channelHandle;
-      setTimeout(() => {
-        navigate(`/channel/${channelHandle}`);
-      }, 3000);
-    } catch (error) {
-      console.log(error);
-      const message =  error?.response?.data?.message
-      setPopup({ type: "error", message});
+    if (channelImage) {
+      formData.append("channelAvatar", channelImage);
     }
-  };
+
+    const res = await api.post(
+      "http://localhost:5050/api/createChannel",
+      formData,
+      {
+        headers: {
+          Authorization: `JWT ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    const message = res?.data?.message;
+    setPopup({ type: "success", message });
+
+    // Refetch user to get updated channel info
+    const userRes = await api.get("http://localhost:5050/api/getUser", {
+      headers: { Authorization: `JWT ${token}` },
+    });
+    if (userRes.data.user) {
+      dispatch(login({ token, user: userRes.data.user }));
+    }
+
+    const channelHandle = res.data.channel.channelHandle;
+    setTimeout(() => {
+      navigate(`/channel/${channelHandle}`);
+    }, 2000);
+  } catch (error) {
+    const message = error?.response?.data?.message;
+    setPopup({ type: "error", message });
+  }
+};
 
   return (
     <div className="h-screen w-full flex items-center justify-center bg-gray-100">

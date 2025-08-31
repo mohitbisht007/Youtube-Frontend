@@ -9,7 +9,7 @@ import { fetchVideos } from "../redux/Slices/videoSlices";
 import { Link } from "react-router-dom";
 import api from "../helpers/axiosInterceptor";
 import { likeVideo, dislikeVideo } from "../redux/Slices/userSlice";
-const token = localStorage.getItem('token')
+const token = localStorage.getItem("token");
 
 import {
   subscribeChannel,
@@ -21,11 +21,13 @@ export default function VideoPage() {
   const [showMore, setShowMore] = useState(false);
   const { videos, loading, error } = useSelector((state) => state.videos);
   const { user } = useSelector((state) => state.user);
-  const [comment, setComment] = useState("")
-  
+  const [comment, setComment] = useState("");
+
   const dispatch = useDispatch();
 
   const { id } = useParams();
+
+  console.log(user);
 
   useEffect(() => {
     if (videos.length > 0) {
@@ -61,6 +63,8 @@ export default function VideoPage() {
     }
   };
 
+  console.log(video);
+
   const handleLike = () => {
     if (videoLiked) {
       // dislike
@@ -73,23 +77,27 @@ export default function VideoPage() {
     }
   };
 
-  const handleComment = async(e) => {
-    e.preventDefault()
-    const res = await api.put(`http://localhost:5050/api/comment/${video._id}`,
-      {comment: comment},
-      {headers: {Authorization: `JWY ${token}`, "Content-Type": "application/json"}, },
-    )
+  const handleComment = async (e) => {
+    e.preventDefault();
+    const res = await api.put(
+      `http://localhost:5050/api/comment/${video._id}`,
+      { comment: comment },
+      {
+        headers: {
+          Authorization: `JWT ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    const newComment = await res.data.comment
+    const newComment = res.data.comment;
     setVideo((prev) => ({
       ...prev,
-      comments: [...prev.comments, {text: newComment}]
-    }))
+      comments: [...prev.comments, newComment], // ✅ no extra {text: ...}
+    }));
 
-    setComment("")
-  }
-
-  console.log(user)
+    setComment("");
+  };
 
   if (!video || !video._id) {
     return <h2 className="pt-[90px] text-center">Loading video...</h2>;
@@ -195,7 +203,10 @@ export default function VideoPage() {
 
         <div className="w-full bg-white rounded-md p-4 shadow">
           {/* Comment Input */}
-          <form className="flex items-start gap-3 mb-6" onSubmit={handleComment}>
+          <form
+            className="flex items-start gap-3 mb-6"
+            onSubmit={handleComment}
+          >
             <img
               className="w-10 h-10 rounded-full object-cover border"
               src={user?.avatar || "/default-avatar.png"}
@@ -226,7 +237,15 @@ export default function VideoPage() {
           </h2>
 
           {/* Comment List */}
-          {video?.comments?.map((comment) => <Comments key={comment._id} comment={comment?.text}/>)}
+
+          {video?.comments?.map((comment) => (
+            <Comments
+              key={comment._id}
+              comment={comment?.text}
+              imgUrl={comment?.user?.avatar}
+              username={comment?.user?.username}
+            />
+          ))}
         </div>
       </div>
       {/* Recommended Videos Sidebar */}

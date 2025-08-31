@@ -8,48 +8,42 @@ import { useNavigate } from "react-router-dom";
 import api from "../helpers/axiosInterceptor";
 import FilterButtons from "./FilterButtons";
 const token = localStorage.getItem("token");
+import { login } from "../redux/Slices/userSlice";
 
-export default function Header({ onHamburgerClick }) {
-  const [userData, setUserData] = useState({});
+export default function Header({ onHamburgerClick, searchValue, setSearchValue }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, isAuth } = useSelector((state) => state.user);
   const [profileClicked, setProfileClikced] = useState(false);
   const [mobileSearch, setMobileSearch] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-  const location = useLocation()
-
-console.log(user)
+  const location = useLocation();
 
   const handleLogOut = () => {
     dispatch(logout());
-    navigate("/");
+    window.location.href = "/"
     setProfileClikced(false);
   };
 
   useEffect(() => {
-    setProfileClikced(false)
+    setProfileClikced(false);
   }, [location.pathname]);
-
 
   useEffect(() => {
     const getData = async () => {
       const response = await api.get("http://localhost:5050/api/getUser", {
-        headers: {
-          Authorization: `JWT ${token}`,
-        },
+        headers: { Authorization: `JWT ${token}` },
       });
-      setUserData(response.data.user);
+      dispatch(login({ token, user: response.data.user }));
     };
-    if(token && isAuth){
-       getData();
+    if (token && isAuth) {
+      getData();
     }
-  }, [isAuth, token]);
+  }, [isAuth, token, dispatch]);
 
   // Mobile search submit handler (replace with your search logic)
   const handleSearch = (e) => {
     e.preventDefault();
-    // Do search logic here
+    navigate("/")
     setMobileSearch(false);
   };
 
@@ -116,6 +110,8 @@ console.log(user)
             className="border-1 w-[70%] rounded-tl-full rounded-bl-full h-[40px] px-5"
             type="text"
             placeholder="Search"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
           <button className="border-1 w-[60px] rounded-tr-full rounded-br-full h-[40px] bg-[#F8F8F8] cursor-pointer hover:bg-[#cdcdcd]">
             <i className="fa-solid fa-magnifying-glass"></i>
@@ -146,33 +142,67 @@ console.log(user)
 
       {/* Profile dropdown unchanged */}
       {profileClicked && (
-        <div className="fixed right-4 top-16 z-50 w-[300px] h-[90vh] shadow-xl border border-[#e7e7e7] p-4 bg-white rounded">
-          {!userData.channel ? (
-            <div>
+        <div className="fixed right-4 top-16 z-50 w-80 shadow-2xl border border-gray-200 rounded-xl bg-white overflow-hidden">
+          {/* User Info Section */}
+          {!user?.channel ? (
+            <div className="flex flex-col items-center gap-3 py-6 px-4">
+              <p className="text-gray-700 font-medium">No channel yet</p>
               <Link to="/create-channel">
-                <button>Create Channel</button>
+                <button className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-semibold shadow-md">
+                  + Create Channel
+                </button>
               </Link>
             </div>
           ) : (
-            <div className="flex gap-5 border-b-2 p-2">
+            <div className="flex items-center gap-4 p-4 border-b border-gray-200">
               <img
-                className="rounded-full border-1 h-[40px] w-[40px]"
+                className="rounded-full h-12 w-12 object-cover border"
                 src={user.avatar}
+                alt="User Avatar"
               />
-              <div>
-                <p>{userData.channel.channelName}</p>
-                <p>{userData.channel.channelHandle}</p>
+              <div className="flex flex-col">
+                <p className="text-gray-900 font-semibold">
+                  {user.channel.channelName}
+                </p>
+                <p className="text-gray-500 text-sm">
+                  {user.channel.channelHandle}
+                </p>
                 <Link
-                  className="text-blue-500"
-                  to={`/channel/${userData.channel.channelHandle}`}
+                  className="text-blue-600 text-sm mt-1 hover:underline"
+                  to={`/channel/${user.channel.channelHandle}`}
                 >
                   View Your Channel
                 </Link>
               </div>
             </div>
           )}
-          <div className="p-3 flex justify-center items-center">
-            <button className="p-2 bg-amber-200" onClick={handleLogOut}>
+
+          {/* Menu Options */}
+          <div className="flex flex-col py-2">
+            <Link
+              to="/settings"
+              className="px-4 py-3 hover:bg-gray-100 text-sm text-gray-700 flex items-center gap-3"
+            >
+              <i className="fa-solid fa-gear text-gray-500"></i>
+              Settings
+            </Link>
+
+            <Link
+              to="/help"
+              className="px-4 py-3 hover:bg-gray-100 text-sm text-gray-700 flex items-center gap-3"
+            >
+              <i className="fa-regular fa-circle-question text-gray-500"></i>
+              Help & Feedback
+            </Link>
+          </div>
+
+          {/* Sign Out */}
+          <div className="border-t border-gray-200">
+            <button
+              className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3"
+              onClick={handleLogOut}
+            >
+              <i className="fa-solid fa-arrow-right-from-bracket"></i>
               Sign Out
             </button>
           </div>
