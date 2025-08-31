@@ -42,7 +42,7 @@ const handleSubmit = async (e) => {
     }
 
     const res = await api.post(
-      "http://localhost:5050/api/createChannel",
+      "/api/createChannel",
       formData,
       {
         headers: {
@@ -56,7 +56,7 @@ const handleSubmit = async (e) => {
     setPopup({ type: "success", message });
 
     // Refetch user to get updated channel info
-    const userRes = await api.get("http://localhost:5050/api/getUser", {
+    const userRes = await api.get("/api/getUser", {
       headers: { Authorization: `JWT ${token}` },
     });
     if (userRes.data.user) {

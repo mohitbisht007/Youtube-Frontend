@@ -10,7 +10,7 @@ export const subscribeChannel = createAsyncThunk(
     try {
       const { token } = getState().user;
       const res = await api.put(
-        "http://localhost:5050/api/channel/subscribe",
+        "/api/channel/subscribe",
         { channelId },
         { headers: { Authorization: `JWT ${token}` } }
       );
@@ -30,7 +30,7 @@ export const unSubscribeChannel = createAsyncThunk(
     try {
       const { token } = getState().user;
       const res = await api.put(
-        "http://localhost:5050/api/channel/unsubscribe",
+        "/channel/unsubscribe",
         { channelId },
         { headers: { Authorization: `JWT ${token}` } }
       );
@@ -49,7 +49,7 @@ export const likeVideo = createAsyncThunk(
     try {
       const { token } = getState().user;
       await api.put(
-        `http://localhost:5050/api/like/${videoId}`,
+        `/api/like/${videoId}`,
         { videoId },
         { headers: { Authorization: `JWT ${token}` } }
       );
@@ -68,7 +68,7 @@ export const dislikeVideo = createAsyncThunk(
     try {
       const { token } = getState().user;
       await api.put(
-        `http://localhost:5050/api/dislike/${videoId}`,
+        `/api/dislike/${videoId}`,
         { videoId },
         { headers: { Authorization: `JWT ${token}` } }
       );

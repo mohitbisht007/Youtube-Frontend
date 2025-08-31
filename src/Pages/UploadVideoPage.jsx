@@ -23,7 +23,7 @@ export default function UploadVideoPage() {
     e.preventDefault();
     try {
       await api.post(
-      "http://localhost:5050/api/uploads",
+      "/api/uploads",
       {
         title: videoDetails.title,
         description: videoDetails.description,

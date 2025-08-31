@@ -30,7 +30,7 @@ export default function Header({ onHamburgerClick, searchValue, setSearchValue }
 
   useEffect(() => {
     const getData = async () => {
-      const response = await api.get("http://localhost:5050/api/getUser", {
+      const response = await api.get("/api/getUser", {
         headers: { Authorization: `JWT ${token}` },
       });
       dispatch(login({ token, user: response.data.user }));

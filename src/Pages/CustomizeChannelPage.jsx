@@ -59,7 +59,7 @@ export default function CustomizeChannelPage() {
         formData.append("channelAvatar", form.channelAvatar);
       }
       await api.put(
-        `http://localhost:5050/api/channel/${channelHandle}/edit`,
+        `/api/channel/${channelHandle}/edit`,
         formData,
         {
           headers: {

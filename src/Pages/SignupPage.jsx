@@ -21,8 +21,8 @@ export default function SignupPage() {
     e.preventDefault();
 
     const endPoint = hasAccount
-      ? "http://localhost:5050/api/login"
-      : "http://localhost:5050/api/signup";
+      ? "/api/login"
+      : "/api/signup";
     const payload = hasAccount
       ? { email: userData.email, password: userData.password }
       : userData;

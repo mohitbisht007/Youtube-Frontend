@@ -80,7 +80,7 @@ export default function VideoPage() {
   const handleComment = async (e) => {
     e.preventDefault();
     const res = await api.put(
-      `http://localhost:5050/api/comment/${video._id}`,
+      `/api/comment/${video._id}`,
       { comment: comment },
       {
         headers: {

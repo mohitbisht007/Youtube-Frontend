@@ -6,7 +6,7 @@ import { subscribeChannel, unSubscribeChannel } from "./userSlice";
 export const fetchChannel = createAsyncThunk(
   "channel/fetchChannel",
   async (handle) => {
-    const res = await api.get(`http://localhost:5050/api/channel/${handle}`);
+    const res = await api.get(`/api/channel/${handle}`);
     return res.data.channelData;
   }
 );
