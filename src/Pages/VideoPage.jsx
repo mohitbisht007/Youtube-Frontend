@@ -250,15 +250,10 @@ export default function VideoPage() {
       </div>
       {/* Recommended Videos Sidebar */}
       <aside className="w-full md:w-[30%] md:sticky md:top-[90px] h-fit px-2">
-        <div className="flex gap-2 mb-4 flex-wrap">
-          <FilterButtons text="All" />
-          <FilterButtons text="Gaming" />
-          <FilterButtons text="Music" />
-          <FilterButtons text="Live" />
-        </div>
+        <h2>Recommended Video</h2>
         <div className="flex flex-col gap-4">
-          {[...Array(8)].map((_, i) => (
-            <RecommendedVideo thumbnail={thumbnail} key={i} />
+          {videos.map((v) => (
+            <RecommendedVideo key={v._id} video={v} />
           ))}
         </div>
       </aside>

@@ -66,7 +66,7 @@ export default function ChannelPage() {
           {user?._id === channel?.channelOwner ? (
             <div className="flex gap-3 flex-wrap">
               <Link to={`/customize-channel/${channel?.channelHandle}`}><FilterButtons text="Customise Channel" /></Link>
-              <FilterButtons text="Edit Videos" />
+              <Link to={`/channel/${channel?.channelHandle}/edit-videos`}><FilterButtons text="Edit Videos" /></Link>
             </div>
           ) : (
             <button

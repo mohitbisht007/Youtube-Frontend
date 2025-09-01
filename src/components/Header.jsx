@@ -180,19 +180,11 @@ export default function Header({ onHamburgerClick, searchValue, setSearchValue }
           {/* Menu Options */}
           <div className="flex flex-col py-2">
             <Link
-              to="/settings"
+              to="/edit-user"
               className="px-4 py-3 hover:bg-gray-100 text-sm text-gray-700 flex items-center gap-3"
             >
               <i className="fa-solid fa-gear text-gray-500"></i>
               Settings
-            </Link>
-
-            <Link
-              to="/help"
-              className="px-4 py-3 hover:bg-gray-100 text-sm text-gray-700 flex items-center gap-3"
-            >
-              <i className="fa-regular fa-circle-question text-gray-500"></i>
-              Help & Feedback
             </Link>
           </div>
 

@@ -7,6 +7,10 @@ export default function Filter({ sideNavOpen, setFilter, videos }) {
 
   const [activeFilter, setActiveFilter] = useState("All");
 
+  const categories = [
+    ...new Set(videos.map((video) => video.category).filter(Boolean))
+  ];
+
   const scrollRight = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: 100, behavior: "smooth" });
@@ -47,14 +51,14 @@ export default function Filter({ sideNavOpen, setFilter, videos }) {
             setFilter("All");
           }}
         />
-        {videos.map((video, idx) => (
+        {categories.map((category, idx) => (
           <FilterButtons
             key={idx}
-            text={video.category}
-            isActive={activeFilter === video.category}
+            text={category}
+            isActive={activeFilter === category}
             onClick={() => {
-              setActiveFilter(video.category);
-              setFilter(video.category);
+              setActiveFilter(category);
+              setFilter(category);
             }}
           />
         ))}
