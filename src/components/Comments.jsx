@@ -1,5 +1,5 @@
 
-export default function Comments({ comment, username, imgUrl }) {
+export default function Comments({comment, username, imgUrl}) {
   return (
     <div className="flex gap-3 mb-4">
       <img

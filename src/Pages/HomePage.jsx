@@ -4,6 +4,7 @@ import Videos from "../components/Videos";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchVideos } from "../redux/Slices/videoSlices";
+import Loader from "../components/Loader";
 
 export default function HomePage({ sideNavOpen, searchValue }) {
   const dispatch = useDispatch();
@@ -23,10 +24,9 @@ export default function HomePage({ sideNavOpen, searchValue }) {
     return matchCategory && matchSearch;
   });
 
-  console.log(searchValue)
-
   return (
     <>
+    {loading && <Loader/>}
       <Filter
         sideNavOpen={sideNavOpen}
         filter={filter}

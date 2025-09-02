@@ -30,7 +30,7 @@ export const unSubscribeChannel = createAsyncThunk(
     try {
       const { token } = getState().user;
       const res = await api.put(
-        "/channel/unsubscribe",
+        "/api/channel/unsubscribe",
         { channelId },
         { headers: { Authorization: `JWT ${token}` } }
       );

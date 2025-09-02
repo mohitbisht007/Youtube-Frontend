@@ -5,11 +5,13 @@ const token = localStorage.getItem("token");
 import Popup from "../components/Popup";
 import { login } from "../redux/Slices/userSlice";
 import { useDispatch } from "react-redux";
+import Loader from "../components/Loader";
 
 export default function CreateChannelPage() {
   const navigate = useNavigate();
 
   const [popup, setPopup] = useState(null);
+  const [loading, setLoading] = useState(false)
 
   const [channelInput, setChannelInput] = useState({
     channelName: "",
@@ -32,6 +34,7 @@ export default function CreateChannelPage() {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
+  setLoading(true);
   try {
     const formData = new FormData();
     formData.append("channelName", channelInput.channelName);
@@ -67,14 +70,18 @@ const handleSubmit = async (e) => {
     setTimeout(() => {
       navigate(`/channel/${channelHandle}`);
     }, 2000);
+    
   } catch (error) {
     const message = error?.response?.data?.message;
     setPopup({ type: "error", message });
   }
+
+  setLoading(false);
 };
 
   return (
     <div className="h-screen w-full flex items-center justify-center bg-gray-100">
+      {loading && <Loader/>}
       {popup && (
         <Popup
           type={popup.type}

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchChannel } from "../redux/Slices/channelSlice";
 import { subscribeChannel, unSubscribeChannel } from "../redux/Slices/userSlice";
 import { Link } from "react-router-dom";
+import Loader from "../components/Loader";
 
 export default function ChannelPage() {
   const { channelHandle } = useParams();
@@ -28,17 +29,19 @@ export default function ChannelPage() {
   };
 
   if (loading) {
-    return <h2>Loading....</h2>;
+    return <Loader/>;
   }
 
-  console.log(user, channel)
+  if(error) {
+    return <h2>{error}</h2>
+  }
 
   return (
     <div className="pt-[90px] max-w-[1200px] m-auto">
       {/* Channel Banner */}
       <div className="w-full">
         <img
-          src="https://yt3.googleusercontent.com/CwTYHrgBOjrqtjBPEotEmiXco7WzngxoRK21mHZoN0s3Zg0b_PtqUOEjEiqZof9WJPSQOTwAvA=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"
+          src="https://cdn.pixabay.com/photo/2016/07/30/19/56/banner-1557881_1280.jpg"
           alt="Channel Banner"
           className="w-full h-[180px] md:h-[220px] object-cover md:rounded-xl shadow"
         />
@@ -90,7 +93,7 @@ export default function ChannelPage() {
 
       {/* Channel Content */}
       <div className="w-full m-auto px-4 py-8">
-        <HomeChannel channelData={channel} />
+        <HomeChannel channelData={channel} channelAvatar = {channel?.channelAvatar} />
       </div>
     </div>
   );

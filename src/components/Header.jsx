@@ -13,21 +13,28 @@ import { login } from "../redux/Slices/userSlice";
 export default function Header({ onHamburgerClick, searchValue, setSearchValue }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, isAuth } = useSelector((state) => state.user);
-  const [profileClicked, setProfileClikced] = useState(false);
-  const [mobileSearch, setMobileSearch] = useState(false);
+
+  const { user, isAuth } = useSelector((state) => state.user); // get user Data from my userSlice
+  const [profileClicked, setProfileClikced] = useState(false); // used to toggle profile div
+  const [mobileSearch, setMobileSearch] = useState(false); // changed search bar according to width
   const location = useLocation();
 
+  console.log(user)
+
+
+  //handleLogout to dispacth my logout reducer
   const handleLogOut = () => {
     dispatch(logout());
     window.location.href = "/"
     setProfileClikced(false);
-  };
+  }; 
 
+  // by default on page load profile div should be false
   useEffect(() => {
     setProfileClikced(false);
   }, [location.pathname]);
 
+  // fetching logged in user to get channelData
   useEffect(() => {
     const getData = async () => {
       const response = await api.get("/api/getUser", {

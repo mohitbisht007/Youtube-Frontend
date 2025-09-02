@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import thumbnail from "../assets/thumbnail.jpg";
-import FilterButtons from "../components/FilterButtons";
 import RecommendedVideo from "../components/RecommendedVideo";
 import Comments from "../components/Comments";
 import { useParams } from "react-router-dom";
@@ -15,73 +13,95 @@ import {
   subscribeChannel,
   unSubscribeChannel,
 } from "../redux/Slices/userSlice";
+import Popup from "../components/Popup";
+import Loader from "../components/Loader";
 
 export default function VideoPage() {
   const [video, setVideo] = useState({});
   const [showMore, setShowMore] = useState(false);
   const { videos, loading, error } = useSelector((state) => state.videos);
-  const { user } = useSelector((state) => state.user);
+  const { user, isAuth } = useSelector((state) => state.user);
   const [comment, setComment] = useState("");
+  const [likeLoading, setLikeLoading] = useState(false);
+  const [subLoading, setSubLoading] = useState(false);
+  const [popup, setPopup] = useState(null);
 
   const dispatch = useDispatch();
 
   const { id } = useParams();
 
-  console.log(user);
-
   useEffect(() => {
-    if (videos.length > 0) {
-      // when videos already in store
+    if (videos.length === 0) {
+      dispatch(fetchVideos());
+    } else {
       const selectedVideo = videos.find((v) => v._id === id);
       setVideo(selectedVideo || {});
-    } else {
-      dispatch(fetchVideos());
     }
   }, [id, videos, dispatch]);
 
   const videoLiked = user?.likedVideos?.includes(id);
 
   const handleSubscribe = async () => {
-    if (user.subscriptions.includes(video.channel._id)) {
-      dispatch(unSubscribeChannel(video.channel._id));
-      setVideo((prev) => ({
-        ...prev,
-        channel: {
-          ...prev.channel,
-          subscribers: prev.channel.subscribers - 1,
-        },
-      }));
-    } else {
-      dispatch(subscribeChannel(video.channel._id));
-      setVideo((prev) => ({
-        ...prev,
-        channel: {
-          ...prev.channel,
-          subscribers: prev.channel.subscribers + 1,
-        },
-      }));
+    if (!isAuth) {
+      const message = "You must be Logged in Subscribe to this Channel";
+      setPopup({ type: "error", message });
+      return;
     }
+    if (subLoading) return;
+    setSubLoading(true);
+
+    if (user.subscriptions.includes(video.channel._id)) {
+      await dispatch(unSubscribeChannel(video.channel._id));
+    } else {
+      await dispatch(subscribeChannel(video.channel._id));
+    }
+
+    // Refetch video/channel for accurate data
+    const res = await api.get(`/api/video/${id}`);
+    setVideo(res.data.video);
+
+    setSubLoading(false);
   };
 
-  console.log(video);
-
-  const handleLike = () => {
-    if (videoLiked) {
-      // dislike
-      dispatch(dislikeVideo(id));
-      setVideo((prev) => ({ ...prev, likes: prev.likes - 1 }));
-    } else {
-      // like
-      dispatch(likeVideo(id));
-      setVideo((prev) => ({ ...prev, likes: prev.likes + 1 }));
+  const handleLike = async () => {
+    if (!isAuth) {
+      const message = "You must be Logged in To Like a Video";
+      setPopup({ type: "error", message });
+      return;
     }
+    if (likeLoading) return; // Prevent rapid clicks
+    setLikeLoading(true);
+
+    if (videoLiked) {
+      await dispatch(dislikeVideo(id));
+    } else {
+      await dispatch(likeVideo(id));
+    }
+
+    // Refetch video for accurate data
+    const res = await api.get(`/api/video/${id}`);
+    setVideo(res.data.video);
+    console.log(res.data.video);
+
+    setLikeLoading(false);
   };
 
   const handleComment = async (e) => {
     e.preventDefault();
+    if (!isAuth) {
+      const message = "You must be Logged in Comment";
+      setPopup({ type: "error", message });
+      return;
+    }
+
+    if (!comment.trim()) {
+      alert("Comment cannot be empty");
+      return;
+    }
+
     const res = await api.put(
       `/api/comment/${video._id}`,
-      { comment: comment },
+      { comment: comment.trim() },
       {
         headers: {
           Authorization: `JWT ${token}`,
@@ -90,21 +110,30 @@ export default function VideoPage() {
       }
     );
 
-    const newComment = res.data.comment;
-    setVideo((prev) => ({
-      ...prev,
-      comments: [...prev.comments, newComment], // ✅ no extra {text: ...}
-    }));
+    // Refetch video for accurate comments
+    const videoRes = await api.get(`/api/video/${video._id}`);
+    setVideo(videoRes.data.video);
 
     setComment("");
   };
 
   if (!video || !video._id) {
-    return <h2 className="pt-[90px] text-center">Loading video...</h2>;
+    return <h2 className="pt-[90px] text-center"><Loader/></h2>;
   }
+
+  if(loading) return <Loader/>
 
   return (
     <div className="w-full min-h-screen bg-gray-50 pt-[90px] px-0 md:px-6 flex flex-col md:flex-row gap-8">
+      {popup && (
+        <Popup
+          type={popup.type}
+          message={popup.message}
+          link="/login"
+          linkText= "Login In Now"
+          onClose={() => setPopup(null)}
+        />
+      )}
       {/* Main Video Section */}
       <div className="w-full md:w-[70%] p-2 mx-auto">
         {/* Video Player */}
@@ -124,7 +153,7 @@ export default function VideoPage() {
         {/* Channel & Actions */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center px-2 mb-4 gap-4">
           <div className="flex items-center gap-3">
-            <Link to={`/channel/${video.channel.channelHandle}`}>
+            <Link to={`/channel/${video?.channel?.channelHandle}`}>
               <img
                 className="rounded-full border h-12 w-12 object-cover bg-gray-200"
                 src={video?.channel?.channelAvatar}
@@ -132,7 +161,7 @@ export default function VideoPage() {
               />
             </Link>
             <div>
-              <Link to={`/channel/${video.channel.channelHandle}`}>
+              <Link to={`/channel/${video?.channel?.channelHandle}`}>
                 <p className="font-semibold text-gray-900">
                   {video?.channel?.channelName}
                 </p>
@@ -143,9 +172,10 @@ export default function VideoPage() {
             </div>
             <button
               onClick={handleSubscribe}
-              className="ml-2 cursor-pointer bg-black text-white px-4 py-1 rounded-md font-semibold shadow hover:bg-gray-800 transition"
+              disabled={subLoading}
+              className={`ml-2 cursor-pointer ${user?.subscriptions?.includes(video?.channel._id) ? "bg-black text-white" : "bg-white text-black hover:text-white" } px-4 py-1 rounded-md font-semibold shadow hover:bg-gray-800 transition`}
             >
-              {user?.subscriptions?.includes(video.channel._id)
+              {user?.subscriptions?.includes(video?.channel._id)
                 ? "Unsubscribe"
                 : "Subscribe"}
             </button>
@@ -153,6 +183,7 @@ export default function VideoPage() {
           <div className="flex gap-2">
             <button
               onClick={handleLike}
+              disabled={likeLoading}
               className="flex items-center gap-1 cursor-pointer bg-gray-100 px-3 py-1 rounded-full hover:bg-gray-200"
             >
               {videoLiked ? (
@@ -177,8 +208,7 @@ export default function VideoPage() {
         <div className="w-full bg-white rounded-md p-4 shadow mb-6">
           <div className="flex gap-6 text-sm text-gray-600 mb-2">
             <span>{video?.views} views</span>
-            <span>{video?.uploadDate || "Upload Date"}</span>
-            <span>#Hashtags</span>
+            <span>Uploaded at: {new Date(video?.createdAt).toLocaleDateString()}</span>
           </div>
           <div>
             <p

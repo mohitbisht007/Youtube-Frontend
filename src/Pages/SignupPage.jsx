@@ -35,6 +35,7 @@ export default function SignupPage() {
       if (hasAccount) {
         dispatch(login({ token, user }));
         navigate("/");
+        window.location.reload();
       } else {
         setHasAccount(true);
       }

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import api from "../helpers/axiosInterceptor";
 import { fetchChannel } from "../redux/Slices/channelSlice";
 import { useNavigate, useParams } from "react-router-dom";
+import Loader from "../components/Loader";
 
 export default function CustomizeChannelPage() {
   const { channelHandle } = useParams();
@@ -80,7 +81,7 @@ export default function CustomizeChannelPage() {
     }
   };
 
-  if (loading || !channel) return <div className="pt-20 text-center">Loading...</div>;
+  if (loading || !channel) return <Loader/>;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 pt-20">

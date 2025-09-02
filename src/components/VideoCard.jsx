@@ -1,4 +1,4 @@
-export default function VideoCard({ videoDetail }) {
+export default function VideoCard({ videoDetail, channelAvatar }) {
   return (
     <div className="mb-5 w-full">
       <div className="w-full aspect-video h-full rounded-md overflow-hidden">
@@ -10,7 +10,7 @@ export default function VideoCard({ videoDetail }) {
       </div>
       <div className="flex gap-3 mt-2">
         <img
-          src={videoDetail?.channel?.channelAvatar}
+          src={videoDetail?.channel?.channelAvatar || channelAvatar}
           alt="channel avatar"
           className="h-12 w-12 rounded-full border object-cover mt-1"
         />

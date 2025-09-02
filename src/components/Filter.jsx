@@ -1,27 +1,28 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import FilterButtons from "./FilterButtons";
 import { useState } from "react";
 
-export default function Filter({ sideNavOpen, setFilter, videos }) {
-  const scrollRef = useRef();
+export default function Filter ({sideNavOpen, setFilter, videos}) {
 
-  const [activeFilter, setActiveFilter] = useState("All");
+  const scrollRef = useRef(); //ref used to scroll filter buttons
+
+  const [activeFilter, setActiveFilter] = useState("All"); // By default activeFilter should be ALL
 
   const categories = [
     ...new Set(videos.map((video) => video.category).filter(Boolean))
-  ];
-
+  ]; // used set to avoid multiple category so that unique categories only should be visible
+  
   const scrollRight = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: 100, behavior: "smooth" });
     }
-  };
+  }; // scroll right
 
   const scrollLeft = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: -100, behavior: "smooth" });
     }
-  };
+  }; // scroll left
 
   return (
     <div

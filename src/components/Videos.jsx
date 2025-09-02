@@ -1,12 +1,11 @@
-import api from "../helpers/axiosInterceptor";
 import VideoCard from './VideoCard'
 import { Link } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import Loader from "./Loader";
 
 export default function Videos({ sideNavOpen, videos, loading}) {
 
-  if(loading) return <h2>Loading.....</h2>
-
+  if(loading) return <Loader/>
+  
   return (
     <div className="relative mt-20">
       <div
