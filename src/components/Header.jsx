@@ -9,25 +9,28 @@ import api from "../helpers/axiosInterceptor";
 import FilterButtons from "./FilterButtons";
 const token = localStorage.getItem("token");
 import { login } from "../redux/Slices/userSlice";
+import Popup from "./Popup";
 
-export default function Header({ onHamburgerClick, searchValue, setSearchValue }) {
+export default function Header({
+  onHamburgerClick,
+  searchValue,
+  setSearchValue,
+}) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { user, isAuth } = useSelector((state) => state.user); // get user Data from my userSlice
   const [profileClicked, setProfileClikced] = useState(false); // used to toggle profile div
   const [mobileSearch, setMobileSearch] = useState(false); // changed search bar according to width
+  const [popup, setPopup] = useState(null);
   const location = useLocation();
-
-  console.log(user)
-
 
   //handleLogout to dispacth my logout reducer
   const handleLogOut = () => {
     dispatch(logout());
-    window.location.href = "/"
+    window.location.href = "/";
     setProfileClikced(false);
-  }; 
+  };
 
   // by default on page load profile div should be false
   useEffect(() => {
@@ -50,8 +53,13 @@ export default function Header({ onHamburgerClick, searchValue, setSearchValue }
   // Mobile search submit handler (replace with your search logic)
   const handleSearch = (e) => {
     e.preventDefault();
-    navigate("/")
+    navigate("/");
     setMobileSearch(false);
+  };
+
+  const handleuploadVideo = () => {
+    const message = "No channel Yet! Create One to Upload";
+    setPopup({ type: "error", message });
   };
 
   return (
@@ -128,11 +136,24 @@ export default function Header({ onHamburgerClick, searchValue, setSearchValue }
           </button>
         </div>
         <div className="flex items-center gap-3">
+          {popup && (
+            <Popup
+              type={popup.type}
+              message={popup.message}
+              onClose={() => setPopup(null)}
+              link="/create-channel"
+              linkText="Create Channel"
+            />
+          )}
           {isAuth ? (
             <>
-              <Link to="/upload">
-                <FilterButtons text="+ Create" />
-              </Link>
+              {!user?.channel ? (
+                <FilterButtons text="+ Create" onClick={handleuploadVideo} type="button"/>
+              ) : (
+                <Link to="/upload">
+                  <FilterButtons text="+ Create" />
+                </Link>
+              )}
               <img
                 className="rounded-full border-1 h-[40px] w-[40px]"
                 src={user.avatar}

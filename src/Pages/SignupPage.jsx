@@ -9,13 +9,12 @@ export default function SignupPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [hasAccount, setHasAccount] = useState(true);
+  const [popup, setPopup] = useState(null)
   const [userData, setUserData] = useState({
     username: "",
     email: "",
     password: "",
   });
-
-  const [popup, setPopup] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,11 +33,16 @@ export default function SignupPage() {
       console.log(res.data)
       if (hasAccount) {
         dispatch(login({ token, user }));
-        navigate("/");
-        window.location.reload();
+        setTimeout(() => {
+          navigate("/");
+          window.location.reload();
+        }, 3000)
+        
       } else {
         setHasAccount(true);
       }
+      const message = res.data.message
+      setPopup({ type: "success", message });
      
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrong!";
@@ -60,6 +64,7 @@ export default function SignupPage() {
             type={popup.type}
             message={popup.message}
             onClose={() => setPopup(null)}
+            timing={3000}
           />
         )}
         <div className="flex flex-col items-center mb-6">

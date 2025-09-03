@@ -2,9 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function RecommendedVideo({ video }) {
+
+const handleClick = () => {
+    window.location.href = `/watch/${video._id}`;
+  };
+  
   return (
     <Link
-      to={`/watch/${video._id}`}
+      onClick={handleClick}
       className="flex gap-3 p-2 rounded-lg hover:bg-gray-100 transition cursor-pointer"
     >
       <img

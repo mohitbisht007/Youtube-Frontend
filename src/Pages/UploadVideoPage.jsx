@@ -147,7 +147,7 @@ export default function UploadVideoPage() {
               <option value="Sports">Sports</option>
               <option value="Podcast">Podcast</option>
                <option value="News">News</option>
-              <option value="Movies">Movies</option>
+              <option value="Entertainment">Entertainment</option>
               <option value="Technology">Technology</option>
               <option value="Comedy">Comedy</option>
             </select>

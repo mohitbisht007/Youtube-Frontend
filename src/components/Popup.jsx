@@ -1,15 +1,35 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useRef } from "react";
 
 // Make sure Font Awesome CSS is loaded in your index.html or main layout
 
-export default function Popup({ type = "success", message, onClose, link, linkText = "Go" }) {
+export default function Popup({
+  type = "success",
+  message,
+  onClose,
+  link,
+  linkText = "Go",
+  timing,
+}) {
+  const location = useLocation();
+  const prevPath = useRef(location.pathname);
+
   useEffect(() => {
-    const timer = setTimeout(() => {
+    if (timing) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, timing);
+      return () => clearTimeout(timer);
+    }
+  }, [onClose, timing]);
+
+  useEffect(() => {
+    if (prevPath.current !== location.pathname) {
       onClose();
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [onClose]);
+    }
+    prevPath.current = location.pathname;
+  }, [location.pathname, onClose]);
 
   const isSuccess = type === "success";
 
@@ -17,9 +37,10 @@ export default function Popup({ type = "success", message, onClose, link, linkTe
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div
         className={`relative flex flex-col items-center gap-3 px-9 py-9 rounded-2xl shadow-2xl w-[90vw] max-w-sm animate-popup
-          ${isSuccess
-            ? "bg-gradient-to-br from-green-400 to-green-500"
-            : "bg-gradient-to-br from-rose-400 to-rose-500"
+          ${
+            isSuccess
+              ? "bg-gradient-to-br from-green-400 to-green-500"
+              : "bg-gradient-to-br from-rose-400 to-rose-500"
           }
         `}
         style={{ transition: "box-shadow 0.2s" }}

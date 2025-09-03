@@ -100,7 +100,6 @@ const userSlice = createSlice({
   reducers: {
     login: (state, action) => {
       const { token, user } = action.payload;
-      console.log("👉 Saving new user to Redux + LocalStorage:", user.username);
       state.token = token;
       state.user = user;
       state.isAuth = true;
@@ -108,7 +107,6 @@ const userSlice = createSlice({
       localStorage.setItem("token", token);
     },
     logout: (state) => {
-      console.log("👉 Logging out, clearing storage");
       state.token = "";
       state.user = null;
       state.isAuth = false;
