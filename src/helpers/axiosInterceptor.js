@@ -1,7 +1,7 @@
 // api.js
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_URL || "https://youtube-backend-bl51.onrender.com" ||
+const baseURL = import.meta.env.VITE_API_URL || "https://youtube-backend-bl51.onrender.com"
 
 const api = axios.create({
   baseURL
