@@ -17,9 +17,16 @@ export default function VideoCard({ videoDetail, channelAvatar }) {
 
         <div>
           <p className="font-bold">{videoDetail?.title}</p>
+          <p className="text-sm text-gray-800">
+            {videoDetail?.channel?.channelName}
+          </p>
           <div className="flex gap-3 text-sm text-gray-600">
             <p>{videoDetail?.views} Views</p>
-            <p>4 months Old</p>
+            <p>
+              {videoDetail?.createdAt
+                ? new Date(videoDetail.createdAt).toLocaleDateString()
+                : ""}
+            </p>
           </div>
         </div>
       </div>
