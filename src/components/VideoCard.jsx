@@ -24,7 +24,7 @@ export default function VideoCard({ videoDetail, channelAvatar }) {
             <p>{videoDetail?.views} Views</p>
             <p>
               {videoDetail?.createdAt
-                ? new Date(videoDetail.createdAt).toLocaleDateString()
+                ? new Date(videoDetail?.createdAt).toLocaleDateString()
                 : ""}
             </p>
           </div>

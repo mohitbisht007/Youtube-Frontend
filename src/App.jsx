@@ -1,19 +1,21 @@
-import ChannelPage from "./Pages/ChannelPage";
-import HomePage from "./Pages/HomePage";
-import VideoPage from "./Pages/VideoPage";
+import { lazy, Suspense } from "react";
+
+const ChannelPage = lazy(() => import("./Pages/ChannelPage"));
+const HomePage = lazy(() => import("./Pages/HomePage"));
+const VideoPage = lazy(() => import("./Pages/VideoPage"));
 import { Route, Routes } from "react-router-dom";
-import SignupPage from "./Pages/SignupPage";
-import UploadVideoPage from "./Pages/UploadVideoPage";
-import CreateChannelPage from "./Pages/CreateChannelPage";
+const SignupPage = lazy(() => import("./Pages/SignupPage"));
+const UploadVideoPage = lazy(() => import("./Pages/UploadVideoPage"));
+const CreateChannelPage = lazy(() => import("./Pages/CreateChannelPage"));
 import Header from "./components/Header";
 import SideNav from "./components/SideNav";
 import { useState } from "react";
 import store from "./redux/store";
-import CustomizeChannelPage from "./Pages/CustomizeChannelPage";
-import EditSingleVideoPage from "./Pages/EditSingleVideoPage";
-import EditVideosPage from "./Pages/EditVideosPage";
-import EditUserPage from "./Pages/EditUserPage";
-
+const CustomizeChannelPage = lazy(() => import("./Pages/CustomizeChannelPage"));
+const EditSingleVideoPage = lazy(() => import("./Pages/EditSingleVideoPage"));
+const EditVideosPage = lazy(() => import("./Pages/EditVideosPage"));
+const EditUserPage = lazy(() => import("./Pages/EditUserPage"));
+import Loader from "./components/Loader";
 
 export default function App() {
   const [sideNavOpen, setSideNavOpen] = useState(false);
@@ -33,7 +35,8 @@ export default function App() {
         setSearchValue={setSearchValue}
       />
       <SideNav open={sideNavOpen} onClose={() => setSideNavOpen(false)} />
-      <Routes>
+      <Suspense fallback={<Loader/>}>
+      <Routes> 
         <Route
           path="/"
           element={
@@ -56,6 +59,7 @@ export default function App() {
         />
         <Route path="/edit-video/:videoId" element={<EditSingleVideoPage />} />
       </Routes>
+      </Suspense>
     </>
   );
 }

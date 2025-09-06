@@ -50,10 +50,10 @@ export default function VideoPage() {
     if (subLoading) return;
     setSubLoading(true);
 
-    if (user.subscriptions.includes(video.channel._id)) {
-      await dispatch(unSubscribeChannel(video.channel._id));
+    if (user?.subscriptions?.includes(video?.channel._id)) {
+      await dispatch(unSubscribeChannel(video?.channel._id));
     } else {
-      await dispatch(subscribeChannel(video.channel._id));
+      await dispatch(subscribeChannel(video?.channel._id));
     }
 
     // Refetch video/channel for accurate data

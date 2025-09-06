@@ -156,7 +156,7 @@ export default function Header({
               )}
               <img
                 className="rounded-full border-1 h-[40px] w-[40px]"
-                src={user.avatar}
+                src={user?.avatar}
                 onClick={() => setProfileClikced(!profileClicked)}
               />
             </>
@@ -185,19 +185,19 @@ export default function Header({
             <div className="flex items-center gap-4 p-4 border-b border-gray-200">
               <img
                 className="rounded-full h-12 w-12 object-cover border"
-                src={user.avatar}
+                src={user?.avatar}
                 alt="User Avatar"
               />
               <div className="flex flex-col">
                 <p className="text-gray-900 font-semibold">
-                  {user.channel.channelName}
+                  {user?.channel?.channelName}
                 </p>
                 <p className="text-gray-500 text-sm">
-                  {user.channel.channelHandle}
+                  {user?.channel?.channelHandle}
                 </p>
                 <Link
                   className="text-blue-600 text-sm mt-1 hover:underline"
-                  to={`/channel/${user.channel.channelHandle}`}
+                  to={`/channel/${user?.channel?.channelHandle}`}
                 >
                   View Your Channel
                 </Link>

@@ -32,8 +32,8 @@ export default function EditVideosPage() {
     <div className="max-w-3xl mx-auto pt-24">
       <h2 className="text-2xl font-bold mb-6">Edit Your Videos</h2>
       <div className="grid gap-6">
-        {channel.videos && channel.videos.length > 0 ? (
-          channel.videos.map((video) => (
+        {channel?.videos && channel?.videos.length > 0 ? (
+          channel?.videos.map((video) => (
             <div key={video._id} className="bg-white rounded-lg shadow p-4 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <img src={video.thumbnail} alt={video.title} className="w-24 h-16 object-cover rounded" />
